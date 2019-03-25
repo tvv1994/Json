@@ -1,0 +1,21 @@
+[
+	{
+		"name": "Bob",
+		"age": 25,
+		"isRabbit": false,
+		"skills": [
+			"gardening",
+			"forestry"
+		]
+	},
+	{
+		"name": "Nick",
+		"age": 29,
+		"isRabbit": false,
+		"skills": [
+			"gardening",
+			"forestry",
+			"silent kill"
+		]
+	}
+]
