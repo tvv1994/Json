@@ -7,4 +7,38 @@
     <groupId>tvv</groupId>
     <artifactId>tvv</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <jackson.version>2.9.8</jackson.version>
+    </properties>
+
+    <!--в блоке dependencies мы можем указать множество зависимостей,
+    который будут выгружены из центральной репы -->
+    <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <!-- пример того, как можно использовать параметр в своем конфиге проекта -->
+            <version>${jackson.version}</version>
+        </dependency>
+    </dependencies>
+
+    <!-- в блоке build задаются параметры и плагины для сборки проекта -->
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources><plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <source>8</source>
+                <target>8</target>
+            </configuration>
+        </plugin>
+    </plugins>
+    </build>
 </project>
