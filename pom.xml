@@ -22,6 +22,11 @@
             <!-- пример того, как можно использовать параметр в своем конфиге проекта -->
             <version>${jackson.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.199</version>
+        </dependency>
     </dependencies>
 
     <!-- в блоке build задаются параметры и плагины для сборки проекта -->
