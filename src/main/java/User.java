@@ -15,4 +15,16 @@ public class User {
     public String getName() {
         return name;
     }
+
+    public int getAge() {
+        return age;
+    }
+
+    public boolean isRabbit() {
+        return isRabbit;
+    }
+
+    public List<String> getSkills() {
+        return skills;
+    }
 }
