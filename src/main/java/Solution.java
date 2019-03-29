@@ -1,10 +1,8 @@
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.URL;
 import java.util.List;
-import java.sql.*;
 
 public class Solution {
 
@@ -38,15 +36,10 @@ public class Solution {
         //}
         //});
         Class.forName(DB_DRIVER);
-        Connection connection = DriverManager.getConnection(DB_URL);
-        //Таблица
-        Statement stH2 = connection.createStatement();
-        stH2.execute(CREATE_TABLE);
-
-        UserRepository userRepository = new UserRepository(stH2);
-        userRepository.saveListOfUsers(list);
-        userRepository.readUser(2);
-        userRepository.removeUser(10);
-
+        UserRepository userRepository = new UserRepository(DB_URL);
+        userRepository.stH2.execute(CREATE_TABLE);
+        userRepository.saveList(list);
+        userRepository.getById(2);
+        userRepository.delete(10);
     }
 }

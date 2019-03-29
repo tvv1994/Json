@@ -1,24 +1,25 @@
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 
 public class UserRepository implements Repository {
     Statement stH2;
+    Connection connection;
 
-    public UserRepository(Statement stH2) {
-        this.stH2 = stH2;
+    public UserRepository(String db_url) throws SQLException {
+        connection = DriverManager.getConnection(db_url);
+        stH2=connection.createStatement();
     }
 
     @Override
-    public void saveListOfUsers(List<User> list){
-        for (User u : list) {
-            addUser(u);
+    public void saveList(List list){
+        for (Object u : list) {
+            add((User) u);
         }
     }
 
     @Override
-    public void addUser(User u){
+    public void add(Object object){
+        User u = (User) object;
         String skill = String.join(", ", u.getSkills());
         String insert = String.format("insert into USERS (name, age, isRabbit, skills) values ('%s', %d, %b, '%s');", u.getName(), u.getAge(), u.isRabbit(), skill);
         try {
@@ -29,9 +30,8 @@ public class UserRepository implements Repository {
     }
 
     @Override
-    public void readUser(int id) {
-        try {
-            ResultSet resultSet = stH2.executeQuery(String.format("SELECT * FROM USERS WHERE Id = %d", id));
+    public void getById(int id) {
+        try (ResultSet resultSet = stH2.executeQuery(String.format("SELECT * FROM USERS WHERE Id = %d", id))){
             resultSet.next();
             String name = resultSet.getString("name");
             int age = resultSet.getInt("age");
@@ -44,7 +44,7 @@ public class UserRepository implements Repository {
     }
 
     @Override
-    public void removeUser(int id){
+    public void delete(int id){
         try {
             stH2.executeUpdate(String.format("DELETE FROM USERS WHERE Id = %d", id));
         } catch (SQLException e) {
