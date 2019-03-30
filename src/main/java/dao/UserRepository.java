@@ -1,8 +1,12 @@
+package dao;
+
+import models.User;
+
 import java.sql.*;
 import java.util.List;
 
 public class UserRepository implements Repository {
-    Statement stH2;
+    public Statement stH2;
     Connection connection;
 
     public UserRepository(String db_url) throws SQLException {
