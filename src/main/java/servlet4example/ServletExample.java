@@ -12,17 +12,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/hello")
+@WebServlet("/")
 public class ServletExample extends HttpServlet {
 
     private JsonReader jsonReader = new JsonReader();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        List<User> users = jsonReader.createUserList();
-        req.setAttribute("users", users);
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/showUsers.jsp");
-        dispatcher.forward(req, resp);
+        List<User> userList = jsonReader.createUserList();
+        for(User u: userList) {
+            resp.getWriter().write(u.toString());
+            resp.getWriter().write("\n");
+        }
     }
 }

@@ -29,4 +29,10 @@ public class User {
     public List<String> getSkills() {
         return skills;
     }
+
+    @Override
+    public String toString() {
+        String skill = String.join(", ", getSkills());
+        return String.format("User - name: %s; age: %d; isRabbit: %b; skills: %s", name, age, isRabbit, skill);
+    }
 }
