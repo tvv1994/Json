@@ -8,7 +8,6 @@ public class Solution {
 
     public static final String DB_URL = "jdbc:h2:" + Solution.class.getClassLoader().getResource("stockExchange").getPath();
     public static final String DB_DRIVER = "org.h2.Driver";
-    public static final String CREATE_TABLE = "create table IF NOT EXISTS USERS (Id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(50), age INT, isRabbit BOOLEAN, skills VARCHAR(150));";
 
     public static void main(String[] args) throws Exception {
         JsonReader jsonReader = new JsonReader();
@@ -34,9 +33,8 @@ public class Solution {
         //});
         Class.forName(DB_DRIVER);
         UserRepository userRepository = new UserRepository(DB_URL);
-        userRepository.stH2.execute(CREATE_TABLE);
         userRepository.saveList(userList);
-        userRepository.getById(2);
+        System.out.println(userRepository.getById(2).toString());
         userRepository.delete(10);
     }
 }

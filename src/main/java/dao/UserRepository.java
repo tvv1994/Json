@@ -2,55 +2,76 @@ package dao;
 
 import models.User;
 
+import javax.jws.soap.SOAPBinding;
 import java.sql.*;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class UserRepository implements Repository {
-    public Statement stH2;
-    Connection connection;
+    private Connection connection;
+    public static final String CREATE_TABLE = "create table IF NOT EXISTS USERS (Id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(50), age INT, isRabbit BOOLEAN, skills VARCHAR(150));";
+    private static final String INSERT_SQL = "INSERT INTO users (name, age, isRabbit, skills) values (?,?,?,?)";
+    private static final String SELECT_BY_ID_SQL = "SELECT * FROM USERS WHERE id like ?";
+    private static final String DELETE_BY_ID_SQL = "DELETE FROM USERS WHERE id like ?";
 
-    public UserRepository(String db_url) throws SQLException {
-        connection = DriverManager.getConnection(db_url);
-        stH2=connection.createStatement();
-    }
-
-    @Override
-    public void saveList(List list){
-        for (Object u : list) {
-            add((User) u);
-        }
-    }
-
-    @Override
-    public void add(Object object){
-        User u = (User) object;
-        String skill = String.join(", ", u.getSkills());
-        String insert = String.format("insert into USERS (name, age, isRabbit, skills) values ('%s', %d, %b, '%s');", u.getName(), u.getAge(), u.isRabbit(), skill);
+    public UserRepository(String db_url){
         try {
-            stH2.execute(insert);
+            connection = DriverManager.getConnection(db_url);
+            try(Statement stH2=connection.createStatement())
+            {
+                stH2.execute(CREATE_TABLE);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void getById(int id) {
-        try (ResultSet resultSet = stH2.executeQuery(String.format("SELECT * FROM USERS WHERE Id = %d", id))){
-            resultSet.next();
-            String name = resultSet.getString("name");
-            int age = resultSet.getInt("age");
-            boolean isRabbit = resultSet.getBoolean("isRabbit");
-            String skills = resultSet.getString("skills");
-            System.out.format("User: %d; name: %s; age: %d; isRabbit: %b; skills: %s.", id, name, age, isRabbit, skills);
-        } catch (SQLException e) {
-            System.out.println("READ-No data is available.");
+    public void saveList(List list){
+        for (Object u : list) {
+            add(u);
         }
     }
 
     @Override
+    public void add(Object object){
+        try(PreparedStatement stmt = connection.prepareStatement(INSERT_SQL)){
+            User u = (User) object;
+            stmt.setString(1, u.getName());
+            stmt.setInt(2, u.getAge());
+            stmt.setBoolean(3, u.isRabbit());
+            stmt.setString(4, String.join(", ", u.getSkills()));
+            stmt.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Optional<User> getById(int id) {
+        try (PreparedStatement stmt = connection.prepareStatement(SELECT_BY_ID_SQL)){
+            stmt.setInt(1, id);
+            try(ResultSet resultSet = stmt.executeQuery()){
+                resultSet.next();
+                return Optional.of(new User(
+                        resultSet.getInt(1),
+                        resultSet.getString(2),
+                        resultSet.getInt(3),
+                        resultSet.getBoolean(4),
+                        Collections.singletonList(resultSet.getString(5))));
+            }
+        } catch (SQLException e) {
+            System.out.println("READ-No data is available.");
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public void delete(int id){
-        try {
-            stH2.executeUpdate(String.format("DELETE FROM USERS WHERE Id = %d", id));
+        try(PreparedStatement stmt = connection.prepareStatement(DELETE_BY_ID_SQL)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("REMOVE-No data is available.");
         }
